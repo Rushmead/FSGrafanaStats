@@ -1,0 +1,23 @@
+Money
+Total loaned
+Loan interest rate
+NPC Wages
+Total Money
+Rolling 5 day average harvest income
+Current leasing costs
+
+Resources
+Number of Cows
+Cows bred
+Silo stuff
+
+Vehicles
+Total tractor count
+Tractor to Player ratio
+Fuel usage over time
+Online players
+
+General
+NPC's doing work
+Play time
+Sold bales
