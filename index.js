@@ -192,7 +192,7 @@ async function doVehicleStats(allStatData){
 }
 
 async function doGeneralStats(allStatData){
-    let npcsDoingWork = allStatData.careerSavegame.statistics[0].fieldJobMissionByNPC[0];
+    let npcsDoingWork = allStatData.server.Vehicles[0].Vehicle.filter((v) => v['$'] && v['$'].isHired && v['$'].isHired === "true").length;
     let playTime = allStatData.careerSavegame.statistics[0].playTime[0];
     let soldBales = allStatData.careerSavegame.statistics[0].baleCount[0];
     let generalDataPoint = newDataPoint('general', [
