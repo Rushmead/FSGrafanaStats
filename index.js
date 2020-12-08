@@ -1,4 +1,3 @@
-// const ftp = require('basic-ftp');
 require('dotenv').config();
 const axios = require('axios');
 const parseString = require('xml2js').parseString;
@@ -58,7 +57,6 @@ async function getAndParseData(endpoint, file = ''){
         console.error(error);
         return null;
     }
-    return null;
 }
 
 async function doFinanceStats(allStatData){
@@ -144,8 +142,10 @@ async function doResourceStats(allStatData){
     writeApi.writePoints(dataPoints);
 }
 
+const drivableCategories = ["tractors", "harvesters", "cars"];
+
 async function doVehicleStats(allStatData){
-    let tractors = allStatData.server.Vehicles[0].Vehicle.filter((v) => v['$'] && v['$'].category === "tractors").length;
+    let tractors = allStatData.server.Vehicles[0].Vehicle.filter((v) => v['$'] && drivableCategories.indexOf(v['$'].category) !== -1).length;
     let players = allStatData.server.Slots[0]['$'].numUsed;
     let vehicles = allStatData.server.Vehicles[0].Vehicle.filter((v) => v['$'] && v['$'].fillLevels);
     let dataPoints = vehicles.map((vehicle) => {
@@ -226,85 +226,10 @@ async function getData(){
     doResourceStats(megaObject);
     doVehicleStats(megaObject);
     doGeneralStats(megaObject);
-    // console.log(loanAnnualInterestRate);
-    // fs.writeFileSync('output.json', JSON.stringify({careerSavegame, economy, vehicles, server}))
-    // console.log();
 }
 
-// async function readFromFile(){
-//     let object = {};
-//     let promises = [];
-//     promises.push(new Promise((resolve, reject) => {
-//         fs.readFile(path.join(temp, 'careerSavegame.xml'), function(err, data){
-//             parseString(data, function(err, result){
-//                 object['career'] = result;
-//                 resolve();
-//             })
-//         });
-//     }));
-//     promises.push(new Promise((resolve, reject) => {
-//         fs.readFile(path.join(temp, 'economy.xml'), function(err, data){
-//             parseString(data, function(err, result){
-//                 object['economy'] = result;
-//                 resolve();
-//             })
-//         });
-//     }));
-//     promises.push(new Promise((resolve, reject) => {
-//         fs.readFile(path.join(temp, 'vehicles.xml'), function(err, data){
-//             parseString(data, function(err, result){
-//                 object['vehicles'] = result;
-//                 resolve();
-//             })
-//         });
-//     }));
-//     promises.push(new Promise((resolve, reject) => {
-//         fs.readFile(path.join(temp, 'fruit_density_growthState.xml'), function(err, data){
-//             parseString(data, function(err, result){
-//                 object['growthState'] = result;
-//                 resolve();
-//             })
-//         });
-//     }));
-//     await Promise.all(promises);
-//     return object;
-// }
-
-// function flatten(input, prefix = ''){
-//     let r = {};
-//     Object.keys(input).forEach((key) => {
-//         if(typeof input[key] === 'object'){
-//            r = {...r, ...flatten(input[key], prefix + "_" + key)}
-//         } else {
-//             r[prefix + "_" + key] = input[key]
-//         }
-//     })
-//     return r;
-// }
-
-
-
-// async function saveData(){
-//     let data = await readFromFile();
-//     let siloData = {};
-//     data.vehicles.careerVehicles.onCreateLoadedObject.find((f) => f['$'].saveId === "Storage_storage1").node.forEach((n) => {
-//         siloData[n['$'].fillType] = n['$'].fillLevel;
-//     });
-//     let siloDataFlattened = flatten(siloData, 'farmSilo');
-//     let tractorCount = data.vehicles.careerVehicles.vehicle.filter((v) => v['$'].filename.indexOf("steerable") !== -1).length;
-//     let flatted = flatten(data);
-//     Object.keys(flatted).forEach((key) => {
-//         writeApi.writePoint(new Point(key).stringField('value', flatted[key]).timestamp(new Date()))
-//     })
-//     Object.keys(siloDataFlattened).forEach((key) => {
-//         writeApi.writePoint(new Point(key).stringField('value', siloDataFlattened[key]).timestamp(new Date()))
-//     })
-//     writeApi.writePoint(new Point('tractorCount').intField('value', tractorCount).timestamp(new Date()));
-    
-//     // console.log(data);
-//     // fs.writeFileSync('test.json', JSON.stringify())
-// }
 async function go(){
+    console.log("Starting FS17 Export");
     await getData();
     writeApi.close().then(() => {
         console.log("FINISHED");
